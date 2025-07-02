@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Quintilian Registration Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+  <div class="max-w-3xl mx-auto p-6 bg-white shadow-md mt-10 rounded-xl">
+    <h1 class="text-2xl font-bold mb-4 text-center">The Quintilian – Course Registration</h1>
+    <form id="registrationForm" class="space-y-4">
+      <!-- Personal Info -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input type="text" name="fullName" placeholder="Full Name" required class="border p-2 rounded w-full">
+        <input type="date" name="dob" placeholder="Date of Birth" required class="border p-2 rounded w-full">
+        <input type="tel" name="phone" placeholder="Phone Number" required class="border p-2 rounded w-full">
+        <input type="email" name="email" placeholder="Email Address" required class="border p-2 rounded w-full">
+      </div>
+      <input type="text" name="address" placeholder="Home Address" required class="border p-2 rounded w-full">
+
+      <!-- How did you hear about us -->
+      <label class="block font-semibold">How did you hear about us?</label>
+      <select name="referral" class="border p-2 rounded w-full">
+        <option value="">Select</option>
+        <option>Instagram</option>
+        <option>Facebook</option>
+        <option>WhatsApp</option>
+        <option>Referral</option>
+        <option>Google/Search</option>
+        <option>Flier / Poster</option>
+        <option>Event or Workshop</option>
+        <option>Other</option>
+      </select>
+
+      <!-- Course Selection -->
+      <label class="block font-semibold mt-4">Select Course:</label>
+      <select name="course" id="courseSelect" class="border p-2 rounded w-full" required>
+        <option value="">Select a Course</option>
+        <option value="59000">Intermediate Communication (Online) – ₦59,000</option>
+        <option value="103000">Intermediate Communication (Physical) – ₦103,000</option>
+        <option value="61000">Advanced Communication (Online) – ₦61,000</option>
+        <option value="103000">Advanced Communication (Physical) – ₦103,000</option>
+        <option value="49000">English Semester 1 – ₦49,000</option>
+        <option value="47000">English Semester 2 – ₦47,000</option>
+        <option value="35000">English Semester 3 – ₦35,000</option>
+      </select>
+
+      <!-- Payment -->
+      <button type="button" onclick="payWithPaystack()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+        Submit & Pay
+      </button>
+    </form>
+  </div>
+
+  <script>
+    function payWithPaystack() {
+      const form = document.getElementById('registrationForm');
+      const amount = document.getElementById('courseSelect').value;
+      const email = form.email.value;
+      const fullName = form.fullName.value;
+
+      if (!amount || !email || !fullName) {
+        alert("Please complete the form.");
+        return;
+      }
+
+      var handler = PaystackPop.setup({
+        key: 'pk_test_xxxxxxxxxxxxxxxxxxxxxxxx', // Replace with your Paystack public key
+        email: email,
+        amount: parseInt(amount) * 100,
+        currency: "NGN",
+        ref: '' + Math.floor((Math.random() * 1000000000) + 1),
+        metadata: {
+          custom_fields: [
+            {
+              display_name: fullName,
+              variable_name: "full_name",
+              value: fullName
+            }
+          ]
+        },
+        callback: function(response) {
+          alert('Payment successful! Transaction ref: ' + response.reference);
+          form.reset();
+        },
+        onClose: function() {
+          alert('Transaction was not completed.');
+        }
+      });
+
+      handler.openIframe();
+    }
+  </script>
+</body>
+</html>
